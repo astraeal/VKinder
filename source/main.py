@@ -3,6 +3,8 @@ import dotenv
 from core.contants import REQUIRED_ENV_VARS
 from core.utils.env import get_missing_env_vars
 
+from database.helpers import initialize_database_if_needed
+
 
 def main() -> None:
     env_loaded = dotenv.load_dotenv()
@@ -18,6 +20,8 @@ def main() -> None:
         for var in missing_env_vars:
             print(f'- {var}')
         return
+
+    initialize_database_if_needed()
 
 
 if __name__ == '__main__':
