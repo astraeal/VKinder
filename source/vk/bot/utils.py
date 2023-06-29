@@ -1,4 +1,5 @@
 import typing
+
 from vk.enums import Sex
 from vk.models import User
 
@@ -6,30 +7,26 @@ if typing.TYPE_CHECKING:
     from vk.bot.bot import VkBot
 
 
-def get_states_queue(user_info: User) -> list[str]:
-    queue = list()
-    if user_info.age is None:
-        queue.append({
-            'name': 'input_age',
-            'message': 'Введите свой возраст'
-        })
+def get_next_state_by_user(user_info: User) -> str:
     if user_info.city_id is None:
-        queue.append({
-            'name': 'input_city',
-            'message': 'Введите свой город'
-        })
-    if user_info.sex is Sex.Unknown:
-        queue.append({
-            'name': 'input_sex',
-            'message': 'Введите свой пол (М / Ж)'
-        })
-    return queue
+        return 'input_city'
+    if user_info.age is None:
+        return 'input_city'
+    if user_info.sex == Sex.Unknown:
+        return 'input_sex'
+    return 'search'
 
 
-def next_state_from_queue(user_id: int,
-                          queue: list[str],
-                          bot: 'VkBot') -> str:
-    next_state = queue.pop()
-    bot.send_message(user_id, next_state['message'])
-    bot.states.set_state(user_id, next_state['name'])
+def get_prompt_by_state(state: str) -> str:
+    return {
+        'input_city': 'Введите свой город',
+        'input_age': 'Введите свой возраст',
+        'input_sex': 'Введите свой пол (М / Ж)'
+    }.get(state, 'Спасибо за терпение, приступаем к поиску!')
+
+
+def change_state_and_send_prompt(user: User, bot: 'VkBot') -> str:
+    next_state = get_next_state_by_user(user)
+    bot.states.set_state(user.id, next_state)
+    bot.send_message(user.id, get_prompt_by_state(next_state))
     return next_state

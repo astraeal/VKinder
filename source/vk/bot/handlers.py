@@ -2,7 +2,11 @@ import typing
 from vk_api.longpoll import Event
 
 from vk.enums import Sex
-from vk.bot.utils import get_states_queue
+from vk.bot.utils import (
+    get_next_state_by_user,
+    get_prompt_by_state,
+    change_state_and_send_prompt,
+)
 
 if typing.TYPE_CHECKING:
     from vk.bot.bot import VkBot
@@ -24,14 +28,19 @@ def start_handler(event: Event, bot: 'VkBot') -> None:
 
     data = bot.states.get_data(event.user_id)
     data['info'] = user_info
-    data['states_queue'] = get_states_queue(user_info)
 
-    if data['states_queue']:
+    next_state = get_next_state_by_user(user_info)
+    bot.states.set_state(event.user_id, next_state)
+
+    if next_state != 'search':
         bot.send_message(
             user_id=event.user_id,
             text='Похоже, у тебя на странице есть не все нужные данные, '
                  'поэтому сейчас я попрошу тебя их отправить мне'
         )
+        bot.send_message(event.user_id, get_prompt_by_state(next_state))
+    else:
+        search_handler(event, bot)
 
 
 def input_city_handler(event: Event, bot: 'VkBot') -> None:
@@ -52,7 +61,12 @@ def input_city_handler(event: Event, bot: 'VkBot') -> None:
         )
         return
 
-    bot.states.get_data(event.user_id)['info'].city_id = city_id
+    user_info = bot.states.get_data(event.user_id)['info']
+    user_info.city_id = city_id
+
+    state = change_state_and_send_prompt(user_info, bot)
+    if state == 'search':
+        search_handler(event, bot)
 
 
 def input_age_handler(event: Event, bot: 'VkBot') -> None:
@@ -73,7 +87,12 @@ def input_age_handler(event: Event, bot: 'VkBot') -> None:
         )
         return
 
-    bot.states.get_data(event.user_id)['info'].age = age
+    user_info = bot.states.get_data(event.user_id)['info']
+    user_info.age = age
+
+    state = change_state_and_send_prompt(user_info, bot)
+    if state == 'search':
+        search_handler(event, bot)
 
 
 def input_sex_handler(event: Event, bot: 'VkBot') -> None:
@@ -86,7 +105,12 @@ def input_sex_handler(event: Event, bot: 'VkBot') -> None:
         return
 
     sex = Sex.Male if raw_sex == 'м' else Sex.Female
-    bot.states.get_data(event.user_id)['info'].sex = sex
+
+    user_info = bot.states.get_data(event.user_id)['info']
+    user_info.sex = sex
+
+    change_state_and_send_prompt(user_info, bot)
+    search_handler(event, bot)
 
 
 def search_handler(event: Event, bot: 'VkBot') -> None:

@@ -4,7 +4,6 @@ from vk_api import VkApi
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
-from vk.bot.utils import next_state_from_queue
 from vk.bot.states import StateStorage
 from vk.bot.handlers import (
     start_handler,
@@ -61,14 +60,11 @@ class VkBot:
     def run(self) -> None:
         longpoll = VkLongPoll(self.api._vk)
 
-        previous_state = ''
-
         for event in longpoll.listen():
             if event.type != VkEventType.MESSAGE_NEW or not event.to_me:
                 continue
 
             user_id = event.user_id
-            data = self.states.get_data(user_id)
             state = self.states.get_state(user_id)
             text = event.text.lower()
 
@@ -84,19 +80,3 @@ class VkBot:
                 stop_handler(event, self)
             else:
                 wrong_command_handler(event, self)
-                continue
-
-            if data['states_queue']:
-                if previous_state != state:
-                    previous_state = next_state_from_queue(
-                        user_id=user_id,
-                        queue=data['states_queue'],
-                        bot=self
-                    )
-            elif state.startswith('input_'):
-                self.send_message(
-                    user_id=user_id,
-                    text='Спасибо за терпение, приступаем к поиску!'
-                )
-                self.states.set_state(user_id, 'search')
-                search_handler(event, self)
