@@ -1,8 +1,10 @@
 from vk_api import VkApi
 from vk_api.exceptions import ApiError
 
-from vk.models import UserSearchSettings, User
+from vk.models import User
 from vk.tools.converters import dict_to_user
+
+from search.models import UserSearchSettings
 
 
 class VkTools:

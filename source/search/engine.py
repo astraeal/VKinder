@@ -1,8 +1,10 @@
-from vk.models import User, UserSearchSettings
+from vk.models import User
 from vk.enums import Sex
 from vk.tools.tools import VkTools
 
 from database.utils import get_views, add_view
+
+from search.models import UserSearchSettings
 
 
 class SearchEngine:
