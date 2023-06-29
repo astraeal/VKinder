@@ -72,3 +72,16 @@ class VkTools:
             f'photo{p["owner_id"]}_{p["id"]}'
             for p in sorted_photos
         ]
+
+    def get_city_id(self, name: str) -> int | None:
+        query = name[:15]
+        try:
+            result = self.api.database.get_cities(q=query, count=1)
+        except ApiError as e:
+            print(f'Ошибка API: {e}')
+            return None
+
+        if not result['items']:
+            return 0
+
+        return result['items'][0]['id']
