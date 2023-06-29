@@ -19,7 +19,7 @@ class User:
     fullname: str
     sex: Sex
     relation: Relation
-    age: int
+    age: Optional[int]
     city_id: Optional[int]
     photos: list[str] = field(default_factory=list)
 
