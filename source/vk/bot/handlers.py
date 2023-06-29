@@ -107,3 +107,21 @@ def stop_handler(event: Event, bot: 'VkBot') -> None:
              'Чтобы снова его запустить, отправьте "Начать" или "Настройки"'
     )
     bot.states.set_state(event.user_id, 'stop')
+
+
+def wrong_command_handler(event: Event, bot: 'VkBot') -> None:
+    state = bot.states.get_state(event.user_id)
+    if state == 'start':
+        message = 'Чтобы начать использовать бота, отправьте "Начать"'
+    elif state == 'stop':
+        message = 'Чтобы снова запустить бота, отправьте "Начать"'
+    elif state == 'search':
+        message = ('Отправьте "Дальше", чтобы найти еще одного человека, '
+                   'или "Стоп", чтобы закончить поиск')
+    else:
+        message = 'Ошибка, я не знаю такой команды'
+
+    bot.send_message(
+        user_id=event.user_id,
+        text=message,
+    )

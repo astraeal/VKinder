@@ -12,6 +12,7 @@ from vk.bot.handlers import (
     input_age_handler,
     search_handler,
     stop_handler,
+    wrong_command_handler,
 )
 
 from vk.models import User
@@ -81,6 +82,9 @@ class VkBot:
                 search_handler(event, self)
             elif state == 'search' and text == 'стоп':
                 stop_handler(event, self)
+            else:
+                wrong_command_handler(event, self)
+                continue
 
             if data['states_queue']:
                 if previous_state != state:
