@@ -21,7 +21,23 @@ from search.engine import SearchEngine
 
 
 class VkBot:
+    """Чат-бот
+
+    Attributes:
+        api: Обертка для работы с методами VK API
+        tools: Инструменты для получения информации о пользователях
+        search: Поисковый движок для поиска подходящих пользователей
+        states: Хранилище состояний и данных для каждого пользователя
+    """
+
     def __init__(self, community_api: VkApi, application_api: VkApi) -> None:
+        """Инициализирует экземпляр класса
+
+        Args:
+            community_api: Обертка для работы с методами от имени сообщества
+            application_api: Обертка для работы с методами от имени приложения
+        """
+
         self.api = community_api.get_api()
         self.tools = VkTools(application_api)
         self.search = SearchEngine(self.tools)
@@ -31,6 +47,14 @@ class VkBot:
                      user_id: int,
                      text: str,
                      attachments: Optional[list[str]] = None) -> None:
+        """Отправляет указанному пользователю сообщение с вложениями
+
+        Args:
+            user_id: ID пользователя, которому предназначается сообщение
+            text: Текст сообщения
+            attachments: Вложения в формате, описанном в документации VK API
+        """
+
         self.api.messages.send(
             user_id=user_id,
             message=text,
@@ -38,6 +62,13 @@ class VkBot:
             random_id=get_random_id())
 
     def send_profile(self, user_id: int, profile: User) -> None:
+        """Отправляет указанному пользователю информацмю о другом пользователе
+
+        Args:
+            user_id: ID пользователя, которому предназначается сообщение
+            profile: Пользователь, информацию о котором необходимо отправить
+        """
+
         age_text = ''
         if profile.age:
             age_text = f', {profile.age} '
@@ -58,6 +89,8 @@ class VkBot:
         )
 
     def run(self) -> None:
+        """Запускает бота"""
+
         longpoll = VkLongPoll(self.api._vk)
 
         for event in longpoll.listen():

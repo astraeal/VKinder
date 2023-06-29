@@ -8,10 +8,31 @@ from search.models import UserSearchSettings
 
 
 class VkTools:
+    """Инструменты для работы с VK API от лица приложения
+
+    Attributes:
+        api: Обертка для работы с методами VK API
+    """
+
     def __init__(self, api: VkApi) -> None:
+        """Инициализирует экземпляр класса
+
+        Args:
+            api: Обертка для работы с методами VK API от лица приложения
+        """
+
         self.api = api.get_api()
 
     def search_users(self, settings: UserSearchSettings) -> list[User] | None:
+        """Находит пользователей по заданным параметрам
+
+        Args:
+            settings: Параметры поиска
+
+        Returns:
+            Найденные пользователи или None, если произошла ошибка API
+        """
+
         min_age = settings.age - 3
         if settings.age >= 18:
             min_age = min(min_age, 18)
@@ -40,6 +61,15 @@ class VkTools:
         return opened_users
 
     def get_user_info(self, user_id: int) -> User | None:
+        """Возвращает информацию о пользователе с указанным ID
+
+        Args:
+            user_id: ID пользователя
+
+        Returns:
+            Информация о пользователе или None, если произошла ошибка API
+        """
+
         try:
             user_info = self.api.users.get(
                 user_ids=[user_id],
@@ -54,6 +84,16 @@ class VkTools:
     def get_user_photos(self,
                         user_id: int,
                         limit: int = 3) -> list[str] | None:
+        """Возвращает лучшие фотографии пользователя с указанным ID
+
+        Args:
+            user_id: ID пользователя
+            limit: Максимальное количество фотографий
+
+        Returns:
+            Фотографии в формате вложений, описанном в документации VK API
+        """
+
         try:
             photos = self.api.photos.get(
                 owner_id=user_id,
@@ -76,6 +116,15 @@ class VkTools:
         ]
 
     def get_city_id(self, name: str) -> int | None:
+        """Находит ID города по указанному названию
+
+        Args:
+            name: Название города
+
+        Returns:
+            ID города или 0, если такого города не найдно, или None,
+            если произошла ошибка API
+        """
         query = name[:15]
         try:
             result = self.api.database.get_cities(q=query, count=1)

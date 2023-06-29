@@ -11,11 +11,20 @@ database = SqliteDatabase(DATABASE_PATH)
 
 
 class BaseModel(Model):
+    """Базовая модель для создания остальных моделей"""
+
     class Meta:
         database = database
 
 
 class Viewed(BaseModel):
+    """Просмотренный пользователь
+
+    Attributes:
+        current_user_id: ID посмотревшего пользователя
+        profile_user_id: ID просмотренного пользователя
+    """
+
     current_user_id = IntegerField()
     profile_user_id = IntegerField()
 

@@ -5,6 +5,15 @@ from vk.enums import Sex, Relation
 
 
 def dict_to_user(raw_user: dict) -> User:
+    """Преобразует словарь в пользователя
+
+    Args:
+        raw_user: Словарь, содержащий необходимые данные
+
+    Returns:
+        Пользователь, созданный из словаря
+    """
+
     if raw_user['bdate'].count('.') == 2:
         today = date.today()
         bday = datetime.strptime(raw_user['bdate'], '%d.%M.%Y').date()

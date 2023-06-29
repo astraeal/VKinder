@@ -8,11 +8,36 @@ from search.models import UserSearchSettings
 
 
 class SearchEngine:
+    """Поисковый движок
+
+    Позволяет находить подходящих пользователей для данного пользователя,
+    используя API ВКонтакте
+
+    Attributes:
+        tools: Инструменты для получения информации от VK API
+        users: Словарь пользователей, содержащий настройки поиска и очередь
+    """
+
     def __init__(self, tools: VkTools) -> None:
+        """Инициализирует экземпляр класса
+
+        Args:
+            tools: Инструменты для получения информации от VK API
+        """
+
         self.tools = tools
         self.users = dict()
 
     def next(self, current_user: User) -> User:
+        """Возвращает следующего подходящего пользователя
+
+        Args:
+            current_user: Пользователь, для которого ищем подходящую пару
+
+        Returns:
+            Пользователь, подходящий под параметры поиска
+        """
+
         if current_user.id not in self.users:
             self.users[current_user.id] = {
                 'settings': UserSearchSettings(
@@ -35,6 +60,15 @@ class SearchEngine:
         return selected_user
 
     def __fill_queue(self, current_user: User) -> None:
+        """Наполняет очередь подходящими пользователями
+
+        Служит целям оптимизации - благодаря очереди нет необходимости
+        делать запрос к API при каждом вызове метода next
+
+        Args:
+            current_user: Пользователь, для которого ищем подходящую пару
+        """
+
         viewed = get_views(current_user.id)
 
         found_users = list()
@@ -52,6 +86,16 @@ class SearchEngine:
 
     @classmethod
     def __rate_user(cls, current_user: User, other_user: User) -> int:
+        """Оценивает подобранную пару для указанного пользователя
+
+        Args:
+            current_user: Пользователь, для которого подбирается пара
+            other_user: Подобранный пользователь
+
+        Returns:
+            Оценка пары
+        """
+
         score = 0
 
         if other_user.city_id:

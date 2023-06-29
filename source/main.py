@@ -14,6 +14,8 @@ from vk.bot.bot import VkBot
 
 
 def main() -> None:
+    """Точка входа в программу"""
+
     env_loaded = dotenv.load_dotenv()
     if not env_loaded:
         print(

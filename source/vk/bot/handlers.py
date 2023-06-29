@@ -13,6 +13,13 @@ if typing.TYPE_CHECKING:
 
 
 def start_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для команды "Начать" или "Настройки"
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     bot.send_message(
         user_id=event.user_id,
         text='Приветствую! VKinder - это бот, который поможет тебе найти '
@@ -44,6 +51,13 @@ def start_handler(event: Event, bot: 'VkBot') -> None:
 
 
 def input_city_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для получения названия города пользователя
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     city = event.text
     city_id = bot.tools.get_city_id(city)
 
@@ -70,6 +84,13 @@ def input_city_handler(event: Event, bot: 'VkBot') -> None:
 
 
 def input_age_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для получения возраста пользователя
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     if not event.text.isdigit():
         bot.send_message(
             user_id=event.user_id,
@@ -96,6 +117,13 @@ def input_age_handler(event: Event, bot: 'VkBot') -> None:
 
 
 def input_sex_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для получения пола пользователя
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     raw_sex = event.text.lower()
     if raw_sex not in 'мж':
         bot.send_message(
@@ -114,6 +142,13 @@ def input_sex_handler(event: Event, bot: 'VkBot') -> None:
 
 
 def search_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для команды "Дальше"
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     current_user_profile = bot.states.get_data(event.user_id)['info']
     profile = bot.search.next(current_user_profile)
     bot.send_profile(event.user_id, profile)
@@ -125,6 +160,13 @@ def search_handler(event: Event, bot: 'VkBot') -> None:
 
 
 def stop_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для команды "Стоп"
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     bot.send_message(
         user_id=event.user_id,
         text='Спасибо за использование бота!\n'
@@ -134,6 +176,13 @@ def stop_handler(event: Event, bot: 'VkBot') -> None:
 
 
 def wrong_command_handler(event: Event, bot: 'VkBot') -> None:
+    """Обработчик для неправильной команды
+
+    Args:
+        event: Событие, активировавшее обработчик
+        bot: Чат-бот
+    """
+
     state = bot.states.get_state(event.user_id)
     if state == 'start':
         message = 'Чтобы начать использовать бота, отправьте "Начать"'

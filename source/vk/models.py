@@ -6,6 +6,19 @@ from vk.enums import Sex, Relation
 
 @dataclass
 class User:
+    """Пользователь
+
+    Attributes:
+        id: ID в ВК
+        fullname: Полное имя
+        sex: Пол
+        relation: Семейное положение
+        age: Возраст
+        city_id: ID города
+        photos: Список фотографий
+        url: Ссылка на страницу ВК
+    """
+
     id: int
     fullname: str
     sex: Sex
