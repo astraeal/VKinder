@@ -1,9 +1,16 @@
+import os
 import dotenv
+from vk_api import VkApi
 
-from core.contants import REQUIRED_ENV_VARS
 from core.utils.env import get_missing_env_vars
+from core.contants import (
+    REQUIRED_ENV_VARS,
+    APPLICATION_TOKEN_VAR,
+    COMMUNITY_TOKEN_VAR
+)
 
 from database.helpers import initialize_database_if_needed
+from vk.bot.bot import VkBot
 
 
 def main() -> None:
@@ -22,6 +29,12 @@ def main() -> None:
         return
 
     initialize_database_if_needed()
+
+    application_api = VkApi(token=os.getenv(APPLICATION_TOKEN_VAR))
+    community_api = VkApi(token=os.getenv(COMMUNITY_TOKEN_VAR))
+    bot = VkBot(community_api, application_api)
+
+    bot.run()
 
 
 if __name__ == '__main__':
