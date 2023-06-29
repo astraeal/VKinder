@@ -21,7 +21,7 @@ def get_next_state_by_user(user_info: User) -> str:
     if user_info.city_id is None:
         return 'input_city'
     if user_info.age is None:
-        return 'input_city'
+        return 'input_age'
     if user_info.sex == Sex.Unknown:
         return 'input_sex'
     return 'search'
