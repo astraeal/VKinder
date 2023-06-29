@@ -25,7 +25,9 @@ def get_views(current_used_id: int) -> set[int]:
         Множество просмотренных ID пользователей
     """
 
-    result = Viewed.select(Viewed.profile_user_id) \
-                .where(Viewed.current_user_id == current_used_id) \
-                .execute()
+    result = (
+        Viewed.select(Viewed.profile_user_id)
+        .where(Viewed.current_user_id == current_used_id)
+        .execute()
+    )
     return {v.profile_user_id for v in result}
