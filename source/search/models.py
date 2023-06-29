@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from core.contants import USERS_PER_REQUEST
+
 
 @dataclass
 class UserSearchSettings:
@@ -7,4 +9,4 @@ class UserSearchSettings:
     sex: int
     age: int
     offset: int = 0
-    count: int = 20
+    count: int = USERS_PER_REQUEST
