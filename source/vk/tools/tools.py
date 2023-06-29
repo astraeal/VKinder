@@ -69,6 +69,6 @@ class VkTools:
         )[:limit]
 
         return [
-            max(p['sizes'], key=lambda x: x['height'])['url']
+            f'photo{p["owner_id"]}_{p["id"]}'
             for p in sorted_photos
         ]
